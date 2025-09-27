@@ -29,7 +29,11 @@
         <div class="content-container">
             <div class="content-left">
                 <div class="video-container">
-                    <img :src="imagePath+imageUrl" alt="Video Preview">
+                    <div v-if="isLoading" class = "loading-placeholder">
+                        <img :src="imagePath+loadingImageUrl" alt="Loading...">
+                    </div>
+                    <img :src="imagePath+imageUrl" v-show="!isLoading" @load="handleImageLoad" @error="handleImageError" alt="Video Preview" >
+                    <!-- <img :src="imagePath+imageUrl" alt="Video Preview" > -->
                 </div>
             </div>
 

@@ -7,6 +7,7 @@ database["questionLists"].map((question, index) => {
     }
     difficultyIndex[question.difficulty].push(index);
 });
+
 createApp({
     /**
      * Vue 组件的数据函数，可以与html绑定
@@ -19,6 +20,9 @@ createApp({
             "difficultyIndex": difficultyIndex, /* 难度索引 */
             "imagePath": "./assets/", /* 图片目录 */
             "imageUrl": "logo.jpg", /* 图片文件名 */
+            "images": [],
+            "isLoading": false, /* 图片是否加载完成 */
+            "loadingImageUrl": "loading.png", /* 加载中图片 */
             "debugInfo": 0, /* 调试信息 双击关于显示 */
             "warningStatus": 0, /* 提示栏的状态 暂不用 */
             /* 提示栏的文字内容 */
@@ -46,6 +50,18 @@ createApp({
         /**
          * 抽取下一个问题
          */
+        // mounted(){
+        //     this.preloadImages()
+        // },
+
+        // preloadImages() {
+        //     this.questionId.forEach(id => {
+        //         let img = new Image();
+        //         img.src = this.imagePath + this.questionData[id].image;
+        //         this.images.push(img);
+        //     });
+        // },
+
         nextQuestion() {
             let previousQuestionId = this.questionId; // 保存前一个问题的ID
             const maxAttempts = 10; // 设置最大尝试次数
@@ -65,6 +81,7 @@ createApp({
                 } while (this.questionId === previousQuestionId && attempts < maxAttempts); // 如果抽到相同问题且未超过最大尝试次数，则重新随机
             }
             /* 更新图片 */
+            this.isLoading = true;
             this.imageUrl = this.questionData[this.questionId].image;
             /* 更新提示栏文字 */
             this.warningText = "猜一猜台词！";
@@ -112,6 +129,13 @@ createApp({
             if (this.debugInfo == 1) this.warningText += `<span style="font-size: 10px">
             ${this.questionId} ${JSON.stringify(this.questionData[this.questionId])}
             </span>`
+        },
+        handleImageLoad() {
+            this.isLoading = false
+        },
+        handleImageError() {
+            this.isLoading = false
+            this.imageUrl = "logo.jpg" // 返回主页
         }
     }
 }).mount('#app')
